@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment Gateway | CIT Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { 
+            /* Using the high-tech pay.jpg background with a dark overlay */
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), 
+                        url('./pay.jpg'); 
+            background-size: cover; 
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+        }
+
+        .payment-card { 
+            /* Matching the Frosted Glass effect from your index page */
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px; 
+            padding: 0; /* Header handles its own padding */
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5); 
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* --- Matching College Header --- */
+        .card-header-custom {
+            background: #3c465a;
+            padding: 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .college-logo {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            background: white;
+            border-radius: 50%;
+            padding: 4px;
+        }
+
+        .header-text h4 { margin: 0; font-weight: 700; font-size: 1.2rem; }
+        .header-text p { margin: 0; font-size: 0.75rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+
+        .form-label { font-size: 0.75rem; font-weight: 800; color: #5a7d9a; letter-spacing: 0.5px; }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 12px;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .form-control:focus {
+            background: white;
+            border-color: #5a7d9a;
+            box-shadow: 0 0 0 3px rgba(90, 125, 154, 0.1);
+        }
+
+        .btn-pay {
+            background-color: #5a7d9a;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 15px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-pay:hover {
+            background-color: #3c465a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .secure-badge {
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.8rem;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="payment-card col-lg-5 col-md-7 col-sm-11">
+            <div class="card-header-custom">
+                <img src="logo.png" alt="CIT Logo" class="college-logo">
+                <div class="header-text">
+                    <h4>City Institute of Technology</h4>
+                    <p>Secure Admission Payment</p>
+                </div>
+            </div>
+            
+            <div class="p-4 p-md-5">
+                <div class="mb-3">
+                    <label class="form-label">CARDHOLDER NAME</label>
+                    <input type="text" id="cardName" class="form-control" placeholder="Full Name on Card" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">CARD NUMBER</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">💳</span>
+                        <input type="text" id="cardNum" class="form-control border-start-0" placeholder="0000 0000 0000 0000" maxlength="16" required>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-6 mb-4">
+                        <label class="form-label">EXPIRY DATE</label>
+                        <input type="text" id="expiry" class="form-control" placeholder="MM / YY" maxlength="5" required>
+                    </div>
+                    <div class="col-6 mb-4">
+                        <label class="form-label">CVV CODE</label>
+                        <input type="password" id="cvv" class="form-control" placeholder="***" maxlength="3" required>
+                    </div>
+                </div>
+                
+                <div id="errorMsg" class="text-danger mb-3 text-center fw-bold small"></div>
+                
+                <button onclick="processPayment()" id="payBtn" class="btn btn-pay btn-primary w-100 fs-6">
+                    Confirm & Pay Enrollment Fee
+                </button>
+                
+                <div class="text-center mt-4">
+                    <div class="secure-badge d-inline-block w-100">
+                        🔒 <strong>SSL Encrypted</strong> - PCI-DSS Compliant Gateway
+                    </div>
+                    <p class="mt-3 text-muted" style="font-size: 0.7rem;">
+                        Your payment is being processed securely. No card details are stored.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function processPayment() {
+        const card = document.getElementById('cardNum').value.trim();
+        const expiry = document.getElementById('expiry').value.trim();
+        const cvv = document.getElementById('cvv').value.trim();
+        const errorDiv = document.getElementById('errorMsg');
+        const btn = document.getElementById('payBtn');
+
+        errorDiv.innerText = ""; 
+
+        if (card.length < 16 || isNaN(card)) {
+            errorDiv.innerText = "❌ Please enter a valid 16-digit card number.";
+            return;
+        }
+        if (!expiry.includes('/') || expiry.length < 5) {
+            errorDiv.innerText = "❌ Enter expiry in MM/YY format.";
+            return;
+        }
+        if (cvv.length < 3 || isNaN(cvv)) {
+            errorDiv.innerText = "❌ Enter a valid 3-digit CVV.";
+            return;
+        }
+
+        // Processing Animation
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> AUTHORIZING WITH BANK...';
+        btn.disabled = true;
+        btn.style.backgroundColor = "#3c465a";
+
+        // Simulate Bank Processing
+        setTimeout(() => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            const name = urlParams.get('name');
+            
+            // Redirect to success page
+            window.location.href = `/success.html?id=${id}&name=${encodeURIComponent(name)}`;
+        }, 2500); 
+    }
+</script>
+</body>
+</html>
